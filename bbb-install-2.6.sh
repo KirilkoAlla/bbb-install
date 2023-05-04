@@ -1852,6 +1852,30 @@ setup_new_feature() {
   docker pull $BACKEND_IMAGE
   docker run -d -p 8080:8080 $BACKEND_IMAGE
 
+  cat >/etc/nginx/sites-available/new-feature.conf <<HERE
+    server {
+      listen 80;
+      server_name $BBB_IP;
+
+      location /new-feature/ {
+        proxy_pass http://localhost:3000/;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      }
+
+      location /new-feature/api/ {
+        proxy_pass http://localhost:8080/;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      }
+    }
+HERE
+
+  ln -s /etc/nginx/sites-available/new-feature.conf /etc/nginx/sites-enabled/new-feature.conf
+
+  systemctl restart nginx
 }
 
 install_python() {
@@ -1872,6 +1896,7 @@ install_bbb_dl() {
   pip install PySide6 shiboken6
   bbb-dl --help
 }
+
 
 setup_ufw() {
   if [ ! -f /etc/bigbluebutton/bbb-conf/apply-config.sh ]; then
