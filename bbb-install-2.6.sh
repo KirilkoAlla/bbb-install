@@ -119,7 +119,7 @@ HERE
 
 main() {
   export DEBIAN_FRONTEND=noninteractive
-  PACKAGE_REPOSITORY=https://github.com/KirilkoAlla
+  PACKAGE_REPOSITORY=ubuntu.bigbluebutton.org
   LETS_ENCRYPT_OPTIONS=(--webroot --non-interactive)
   SOURCES_FETCHED=false
   GL3_DIR=~/greenlight-v3
