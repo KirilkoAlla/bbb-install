@@ -42,7 +42,7 @@ Script for installing a BigBlueButton 2.6 server in under 30 minutes. It also su
 This script also supports installation of a coturn (TURN) server on a separate server.
 
 USAGE:
-    wget -qO- https://github.com/KirilkoAlla/bigbluebutton.git/bbb-install-2.6.sh | bash -s -- [OPTIONS]
+    wget -qO- https://ubuntu.bigbluebutton.org/bbb-install-2.6.sh | bash -s -- [OPTIONS]
 
 OPTIONS (install BigBlueButton):
 
@@ -119,7 +119,7 @@ HERE
 
 main() {
   export DEBIAN_FRONTEND=noninteractive
-  PACKAGE_REPOSITORY=https://github.com/KirilkoAlla/bigbluebutton.git
+  PACKAGE_REPOSITORY=ubuntu.bigbluebutton.org
   LETS_ENCRYPT_OPTIONS=(--webroot --non-interactive)
   SOURCES_FETCHED=false
   GL3_DIR=~/greenlight-v3
