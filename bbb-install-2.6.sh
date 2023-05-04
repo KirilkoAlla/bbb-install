@@ -129,6 +129,8 @@ main() {
   FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image:tag
   BACKEND_IMAGE=kirilkoalla/cuttlesystemsvks-image:tag
   PYTHON_VERSION=3.9.9
+  CVS_DIR=~/cuttlesystemsvks
+  FBB_DIR=~/bigbluebutton-front
   CR_TMPFILE=$(mktemp /tmp/carriage-return.XXXXXX)
   printf '\n' >"$CR_TMPFILE"
 
@@ -1844,12 +1846,20 @@ HERE
   configure_coturn
 }
 
-setup_new_feature() {
+setup_my_app() {
 
   install_docker
 
-  docker pull $FRONTEND_IMAGE
+   if [ ! -d $FBB_DIR ]; then
+    mkdir -p $FBB_DIR && say "created $FBB_DIR"
+  fi
+
+   docker pull $FRONTEND_IMAGE
   docker run -d -p 3000:3000 $FRONTEND_IMAGE
+
+   if [ ! -d $CVS_DIR ]; then
+    mkdir -p $CVS_DIR && say "created $CVS_DIR"
+  fi
 
   docker pull $BACKEND_IMAGE
   docker run -d -p 8080:8080 $BACKEND_IMAGE
@@ -1882,18 +1892,12 @@ systemctl restart nginx
 
 }
 
-install_python() {
+install_bbb_dl() {
   add-apt-repository ppa:deadsnakes/ppa
   apt-get update
   apt-get -y install python$PYTHON_VERSION
-}
-
-install_pip() {
   apt-get -y install python$PYTHON_VERSION-dev build-essential
   curl https://bootstrap.pypa.io/get-pip.py | python$PYTHON_VERSION
-}
-
-install_bbb_dl() {
   pip install --user bbb-dl
   export PATH=$PATH:/root/.local/bin
   pip show bbb-dl
@@ -1901,16 +1905,8 @@ install_bbb_dl() {
   bbb-dl --help
 }
 
-setup_bbbsh() {
-  echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc
-  source ~/.bashrc
-}
-
-setup_new_feature
-install_python
-install_pip
+setup_my_app
 install_bbb_dl
-setup_bbbsh
 
 setup_ufw() {
   if [ ! -f /etc/bigbluebutton/bbb-conf/apply-config.sh ]; then
