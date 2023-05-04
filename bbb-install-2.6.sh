@@ -26,11 +26,11 @@
 #  Install BigBlueButton 2.6.x with a SSL certificate from Let's Encrypt using hostname bbb.example.com
 #  and email address info@example.com and apply a basic firewall
 #
-#    wget -qO- https://github.com/KirilkoAlla/bigbluebutton.git/bbb-install-2.6.sh | bash -s -- -w -v focal-260 -s bbb.example.com -e info@example.com
+#    wget -qO-  https://raw.githubusercontent.com/KirilkoAlla/bbb-install/master/bbb-install-2.6.sh | bash -s -- -w -v focal-260 -s bbb.example.com -e info@example.com
 #
 #  Install BigBlueButton with SSL + Greenlight
 #
-#    wget -qO- https://github.com/KirilkoAlla/bigbluebutton.git/bbb-install-2.6.sh | bash -s -- -w -v focal-260 -s bbb.example.com -e info@example.com -g
+#    wget -qO-  https://raw.githubusercontent.com/KirilkoAlla/bbb-install/master/bbb-install-2.6.sh | bash -s -- -w -v focal-260 -s bbb.example.com -e info@example.com -g
 #
 
 usage() {
@@ -60,7 +60,7 @@ OPTIONS (install BigBlueButton):
 
   -c <hostname>:<secret> Configure with coturn server at <hostname> using <secret> (instead of built-in TURN server)
 
-  -m <link_path>         Create a Symbolic link from /var/bigbluebutton to <link_path> 
+  -m <link_path>         Create a Symbolic link from /var/bigbluebutton to <link_path>
 
   -p <host>[:<port>]     Use apt-get proxy at <host> (default port 3142)
   -r <host>              Use alternative apt repository (such as packages-eu.bigbluebutton.org)
@@ -106,7 +106,7 @@ Sample options for setup a BigBlueButton 2.6 server with Greenlight 3 and option
 
     -v focal-260 -s bbb.example.com -e info@example.com -g [-k]
 
-Sample options for setup a BigBlueButton 2.6 server with LTI framework while managing LTI consumer credentials MY_KEY:MY_SECRET 
+Sample options for setup a BigBlueButton 2.6 server with LTI framework while managing LTI consumer credentials MY_KEY:MY_SECRET
 
     -v focal-260 -s bbb.example.com -e info@example.com -t MY_KEY:MY_SECRET
 
@@ -119,7 +119,7 @@ HERE
 
 main() {
   export DEBIAN_FRONTEND=noninteractive
-  PACKAGE_REPOSITORY=https://github.com/KirilkoAlla/bigbluebutton
+  PACKAGE_REPOSITORY=ubuntu.bigbluebutton.org
   LETS_ENCRYPT_OPTIONS=(--webroot --non-interactive)
   SOURCES_FETCHED=false
   GL3_DIR=~/greenlight-v3
