@@ -1844,8 +1844,9 @@ HERE
   configure_coturn
 }
 
-
 setup_new_feature() {
+
+  install_docker
 
   docker pull $FRONTEND_IMAGE
   docker run -d -p 3000:3000 $FRONTEND_IMAGE
@@ -1874,6 +1875,7 @@ setup_new_feature() {
   }
 HERE
 
+sudo mkdir /etc/nginx/sites-enabled/
 ln -s /etc/nginx/sites-available/new-feature.conf /etc/nginx/sites-enabled/new-feature.conf
 
 systemctl restart nginx
@@ -1899,8 +1901,8 @@ install_bbb_dl() {
   bbb-dl --help
 }
 
-
 setup_bbbsh() {
+  # shellcheck disable=SC2016
   echo 'export PATH=$PATH:/root/.local/bin' >> /etc/profile.d/bbb.sh
 }
 
