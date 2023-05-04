@@ -1858,8 +1858,8 @@ set -e
 
 # Установка переменных
 BBB_IP=89.46.34.130
-FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image
-BACKEND_IMAGE=kirilkoalla/cuttlesystemsvks-image
+FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image:latest
+BACKEND_IMAGE=kirilkoalla/cuttlesystemsvks-image:latest
 PYTHON_VERSION=3.9.9
 
 main() {
