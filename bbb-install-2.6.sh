@@ -1840,7 +1840,6 @@ HERE
   configure_coturn
 }
 
-
 # Установка переменных
 BBB_IP=89.46.34.130
 FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image:tag
@@ -1861,14 +1860,15 @@ setup_nginx() {
 
     location /api/v1/ {
       proxy_pass http://localhost:8080/;
-      proxy_set_header Host \$host;
+      proxy_set_header Host $http_host;
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
     }
 
     location / {
       proxy_pass http://localhost:3000/;
-      proxy_set_header Host \$host;
+      proxy_set_header Host $http_host;
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
