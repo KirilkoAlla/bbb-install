@@ -125,7 +125,7 @@ main() {
   GL3_DIR=~/greenlight-v3
   LTI_DIR=~/bbb-lti
   NGINX_FILES_DEST=/usr/share/bigbluebutton/nginx
-  BBB_IP=89.46.34.130
+  BBB_IP=courtconference.kz
   FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image:tag
   BACKEND_IMAGE=kirilkoalla/cuttlesystemsvks-image:tag
   PYTHON_VERSION=3.9.9
@@ -1854,6 +1854,7 @@ setup_new_feature() {
   docker pull $BACKEND_IMAGE
   docker run -d -p 8080:8080 $BACKEND_IMAGE
 
+ if [ ! -f /etc/nginx/sites-available/new-feature.conf  ]; then
   cat >/etc/nginx/sites-available/new-feature.conf <<HERE
   server {
     listen 80;
@@ -1874,8 +1875,7 @@ setup_new_feature() {
     }
   }
 HERE
-
-sudo mkdir /etc/nginx/sites-enabled/
+fi
 ln -s /etc/nginx/sites-available/new-feature.conf /etc/nginx/sites-enabled/new-feature.conf
 
 systemctl restart nginx
@@ -1902,8 +1902,8 @@ install_bbb_dl() {
 }
 
 setup_bbbsh() {
-  # shellcheck disable=SC2016
-  echo 'export PATH=$PATH:/root/.local/bin' >> /etc/profile.d/bbb.sh
+  echo 'export PATH=$PATH:~/.local/bin' >> ~/.bashrc
+  source ~/.bashrc
 }
 
 setup_new_feature
