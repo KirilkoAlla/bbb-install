@@ -125,6 +125,10 @@ main() {
   GL3_DIR=~/greenlight-v3
   LTI_DIR=~/bbb-lti
   NGINX_FILES_DEST=/usr/share/bigbluebutton/nginx
+  BBB_IP=89.46.34.130
+  FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image:tag
+  BACKEND_IMAGE=kirilkoalla/cuttlesystemsvks-image:tag
+  PYTHON_VERSION=3.9.9
   CR_TMPFILE=$(mktemp /tmp/carriage-return.XXXXXX)
   printf '\n' >"$CR_TMPFILE"
 
@@ -1840,44 +1844,6 @@ HERE
   configure_coturn
 }
 
-# Установка переменных
-BBB_IP=89.46.34.130
-FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image:tag
-BACKEND_IMAGE=kirilkoalla/cuttlesystemsvks-image:tag
-PYTHON_VERSION=3.9.9
-
-update_system() {
-  apt-get update
-  apt-get -y upgrade
-}
-
-setup_nginx() {
-  rm -f /etc/nginx/sites-enabled/bigbluebutton
-  cat >/etc/nginx/sites-available/new-feature <<HERE
-  server {
-    listen 80;
-    server_name $BBB_IP;
-
-    location /api/v1/ {
-      proxy_pass http://localhost:8080/;
-      proxy_set_header Host \$host;
-      proxy_set_header X-Real-IP \$remote_addr;
-      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    }
-
-    location / {
-      proxy_pass http://localhost:3000/;
-      proxy_set_header Host \$host;
-      proxy_set_header X-Real-IP \$remote_addr;
-      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    }
-  }
-HERE
-  ln -s /etc/nginx/sites-available/new-feature /etc/nginx/sites-enabled/new-feature
-  systemctl restart nginx
-}
-
-
 setup_new_feature() {
 
   docker pull $FRONTEND_IMAGE
@@ -1885,6 +1851,31 @@ setup_new_feature() {
 
   docker pull $BACKEND_IMAGE
   docker run -d -p 8080:8080 $BACKEND_IMAGE
+
+  cat >/etc/nginx/sites-available/new-feature.conf <<HERE
+    server {
+      listen 80;
+      server_name $BBB_IP;
+
+      location /new-feature/ {
+        proxy_pass http://localhost:3000/;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      }
+
+      location /new-feature/api/ {
+        proxy_pass http://localhost:8080/;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      }
+    }
+HERE
+
+  ln -s /etc/nginx/sites-available/new-feature.conf /etc/nginx/sites-enabled/new-feature.conf
+
+  systemctl restart nginx
 }
 
 install_python() {
