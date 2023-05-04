@@ -1853,13 +1853,13 @@ HERE
     chmod +x /etc/bigbluebutton/bbb-conf/apply-config.sh
   fi
 }
-Script to install BigBlueButton 2.6 with Nginx, Frontend, Backend, bbb-download, Python and pip
+
 set -e
 
-Variables
+# Установка переменных
 BBB_IP=89.46.34.130
-FRONTEND_IMAGE=bigbluebutton-front-image
-BACKEND_IMAGE=cuttlesystemsvks-image
+FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image
+BACKEND_IMAGE=kirilkoalla/cuttlesystemsvks-image
 PYTHON_VERSION=3.9.9
 
 main() {
@@ -1881,24 +1881,24 @@ update_system() {
 setup_nginx() {
   rm -f /etc/nginx/sites-enabled/bigbluebutton
   cat >/etc/nginx/sites-available/new-feature <<HERE
-server {
-listen 80;
-server_name $BBB_IP;
+  server {
+    listen 80;
+    server_name $BBB_IP;
 
-location /api/v1/ {
-proxy_pass http://localhost:8080/;
-proxy_set_header Host $host;
-proxy_set_header X-Real-IP $remote_addr;
-proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-}
+    location /api/v1/ {
+      proxy_pass http://localhost:8080/;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
 
-location / {
-proxy_pass http://localhost:3000/;
-proxy_set_header Host $host;
-proxy_set_header X-Real-IP $remote_addr;
-proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-}
-}
+    location / {
+      proxy_pass http://localhost:3000/;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+  }
 HERE
   ln -s /etc/nginx/sites-available/new-feature /etc/nginx/sites-enabled/new-feature
   systemctl restart nginx
