@@ -1840,21 +1840,6 @@ HERE
   configure_coturn
 }
 
-setup_ufw() {
-  if [ ! -f /etc/bigbluebutton/bbb-conf/apply-config.sh ]; then
-    cat >/etc/bigbluebutton/bbb-conf/apply-config.sh <<HERE
-#!/bin/bash
-
-# Pull in the helper functions for configuring BigBlueButton
-source /etc/bigbluebutton/bbb-conf/apply-lib.sh
-
-enableUFWRules
-HERE
-    chmod +x /etc/bigbluebutton/bbb-conf/apply-config.sh
-  fi
-}
-
-set -e
 
 # Установка переменных
 BBB_IP=89.46.34.130
@@ -1919,6 +1904,20 @@ install_bbb_dl() {
   pip show bbb-dl
   pip install PySide6 shiboken6
   bbb-dl --help
+}
+
+setup_ufw() {
+  if [ ! -f /etc/bigbluebutton/bbb-conf/apply-config.sh ]; then
+    cat >/etc/bigbluebutton/bbb-conf/apply-config.sh <<HERE
+#!/bin/bash
+
+# Pull in the helper functions for configuring BigBlueButton
+source /etc/bigbluebutton/bbb-conf/apply-lib.sh
+
+enableUFWRules
+HERE
+    chmod +x /etc/bigbluebutton/bbb-conf/apply-config.sh
+  fi
 }
 
 main "$@" || exit 1
