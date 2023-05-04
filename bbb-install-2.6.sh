@@ -1858,20 +1858,24 @@ set -e
 
 # Установка переменных
 BBB_IP=89.46.34.130
-FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image:latest
-BACKEND_IMAGE=kirilkoalla/cuttlesystemsvks-image:latest
+FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image:tag
+BACKEND_IMAGE=kirilkoalla/cuttlesystemsvks-image:tag
 PYTHON_VERSION=3.9.9
 
-main() {
+  # shellcheck disable=SC2218
   update_system
   install_dependencies
   install_bigbluebutton
+  # shellcheck disable=SC2218
   setup_nginx
+  # shellcheck disable=SC2218
   setup_new_feature
+  # shellcheck disable=SC2218
   install_python
+  # shellcheck disable=SC2218
   install_pip
+  # shellcheck disable=SC2218
   install_bbb_dl
-}
 
 update_system() {
   apt-get update
