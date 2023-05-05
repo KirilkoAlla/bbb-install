@@ -1900,9 +1900,10 @@ install_bbb_dl() {
   apt-get update
   apt-get -y install python$PYTHON_VERSION
   apt-get -y install python$PYTHON_VERSION-dev build-essential
-  curl https://bootstrap.pypa.io/pip/3.9.9/get-pip.py | python$PYTHON_VERSION get-pip.py
-  pip install PySide6 shiboken6
-  pip install --user bbb-dl
+  curl https://bootstrap.pypa.io/pip/3.9.9/get-pip.py | python$PYTHON_VERSION
+  py -m pip install
+  pip3 install PySide6 shiboken6
+  pip3 install --user bbb-dl
   export PATH=$PATH:/root/.local/bin
   bbb-dl --help
 
