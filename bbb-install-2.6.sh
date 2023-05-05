@@ -1492,7 +1492,7 @@ HERE
 #      ln -s /local/certs/fullchain.pem "/etc/letsencrypt/live/$HOST/fullchain.pem"
 #      ln -s /local/certs/privkey.pem "/etc/letsencrypt/live/$HOST/privkey.pem"
 #    fi
-#  fi
+  fi
 
   if [ -z "$COTURN" ]; then
     # No COTURN credentials provided, setup a local TURN server
