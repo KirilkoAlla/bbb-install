@@ -1847,37 +1847,27 @@ HERE
 }
 
 setup_my_app() {
-
-  install_bbb_dl
   install_docker
-
-   if [ ! -d $FBB_DIR ]; then
-    mkdir -p $FBB_DIR && say "created $FBB_DIR"
-  fi
-
-   docker pull $FRONTEND_IMAGE
+  sudo mkdir -p /etc/nginx/sites-available
+  mkdir -p $FBB_DIR && echo "Created $FBB_DIR"
+  docker pull $FRONTEND_IMAGE
   docker run -d -p 3000:3000 $FRONTEND_IMAGE
 
-   if [ ! -d $CVS_DIR ]; then
-    mkdir -p $CVS_DIR && say "created $CVS_DIR"
-  fi
-
+  mkdir -p $CVS_DIR && echo "Created $CVS_DIR"
   docker pull $BACKEND_IMAGE
-  docker run -d -p 8080:8080 $BACKEND_IMAGE
+  docker run -d -p 8080:8080 --mount type=bind,source=/var/bigbluebutton/audio,target=/app/audio $BACKEND_IMAGE
 
- if [ ! -f /etc/nginx/sites-available/new-feature.conf  ]; then
-  cat >/etc/nginx/sites-available/new-feature.conf <<HERE
+  cat > $NGINX_CONFIG <<HERE
   server {
     listen 80;
     server_name $BBB_IP;
-
+    root /var/www/html;
     location /new-feature/ {
       proxy_pass http://localhost:3000/;
       proxy_set_header Host \$host;
       proxy_set_header X-Real-IP \$remote_addr;
       proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     }
-
     location /new-feature/api/ {
       proxy_pass http://localhost:8080/;
       proxy_set_header Host \$host;
@@ -1886,30 +1876,58 @@ setup_my_app() {
     }
   }
 HERE
-fi
-ln -s /etc/nginx/sites-available/new-feature.conf /etc/nginx/sites-enabled/new-feature.conf
 
-systemctl restart nginx
-
+  ln -s $NGINX_CONFIG $NGINX_CONFIG_ENABLED
+  systemctl restart nginx
 }
 
 install_bbb_dl() {
-  apt-get update
-  apt-get -y install software-properties-common
-  add-apt-repository ppa:deadsnakes/ppa
-  apt-get update
   apt-get -y install python$PYTHON_VERSION
   apt-get -y install python$PYTHON_VERSION-dev build-essential
-  curl https://bootstrap.pypa.io/pip/3.9/get-pip.py | python$PYTHON_VERSION
-  py -m pip install
-  pip install PySide6 shiboken6
+  apt-get -y install python3-pip
+  apt-get -y install ffmpeg
+  apt-get -y install npm
+  npm install playwright
+  sudo apt update
+  sudo apt install nodejs
+  npx playwright install chromium
+  pip install --upgrade pip
+  pip install --upgrade pyside6
+  pip install pyside6-essentials
   pip install --user bbb-dl
   export PATH=$PATH:/root/.local/bin
   bbb-dl --help
-
 }
 
+update_nodejs() {
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  . ~/.nvm/nvm.sh
+  nvm install node
+  nvm use node
+  node --version
+}
+
+install_docker() {
+  apt-get update
+  apt-get -y install docker.io
+  systemctl enable docker
+}
+
+update_nodejs
+install_bbb_dl
 setup_my_app
+
+cp newCheckNewFilesForMove4.sh /usr/local/bin/
+chmod +x /usr/local/bin/newCheckNewFilesForMove4.sh
+echo "* * * * * root /usr/local/bin/newCheckNewFilesForMove4.sh" >> /etc/crontab
+
+cp DeletedBashScript.sh /usr/local/bin/
+chmod +x /usr/local/bin/DeletedBashScript.sh
+echo "* * * * * root /usr/local/bin/DeletedBashScript.sh" >> /etc/crontab
+
+cp bbb-dl-script.sh /usr/local/bin/
+chmod +x /usr/local/bin/bbb-dl-script.sh
+echo "* * * * * root /usr/local/bin/bbb-dl-script.sh" >> /etc/crontab
 
 setup_ufw() {
   if [ ! -f /etc/bigbluebutton/bbb-conf/apply-config.sh ]; then
