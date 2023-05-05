@@ -1898,13 +1898,13 @@ install_bbb_dl() {
   apt-get -y install software-properties-common
   add-apt-repository ppa:deadsnakes/ppa
   apt-get update
-  apt-get -y install python$PYTHON_VERSION
-  apt-get -y install python$PYTHON_VERSION-dev build-essential
-  curl https://bootstrap.pypa.io/pip/2.7/get-pip.py | python$PYTHON_VERSION
+  apt-get -y install python3.8
+  apt-get -y install python3.8 python3.8-dev build-essential
+  curl https://bootstrap.pypa.io/get-pip.py | python3.8
+  pip install PySide6 shiboken6
   pip install --user bbb-dl
   export PATH=$PATH:/root/.local/bin
   pip show bbb-dl
-  pip install PySide6 shiboken6
   bbb-dl --help
 }
 
