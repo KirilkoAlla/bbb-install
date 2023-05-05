@@ -1582,8 +1582,8 @@ server {
   listen [::]:443 ssl http2;
   server_name $HOST;
 
-    ssl_certificate /etc/letsencrypt/live/$HOST/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/$HOST/privkey.pem;
+    #ssl_certificate /etc/letsencrypt/live/$HOST/fullchain.pem;
+    #ssl_certificate_key /etc/letsencrypt/live/$HOST/privkey.pem;
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
     ssl_protocols TLSv1.2 TLSv1.3;
