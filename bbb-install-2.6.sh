@@ -1478,21 +1478,21 @@ HERE
       systemctl restart nginx
     fi
 
-    if [ -z "$PROVIDED_CERTIFICATE" ]; then
-      if
-        ! certbot --email "$EMAIL" --agree-tos --rsa-key-size 4096 -w /var/www/bigbluebutton-default/assets/ \
-        -d "$HOST" --deploy-hook "systemctl reload nginx" "${LETS_ENCRYPT_OPTIONS[@]}" certonly
-      then
-        systemctl restart nginx
-        err "Let's Encrypt SSL request for $HOST did not succeed - exiting"
-      fi
-    else
-      # Place your fullchain.pem and privkey.pem files in /local/certs/ and bbb-install-2.6.sh will deal with the rest.
-      mkdir -p "/etc/letsencrypt/live/$HOST/"
-      ln -s /local/certs/fullchain.pem "/etc/letsencrypt/live/$HOST/fullchain.pem"
-      ln -s /local/certs/privkey.pem "/etc/letsencrypt/live/$HOST/privkey.pem"
-    fi
-  fi
+#    if [ -z "$PROVIDED_CERTIFICATE" ]; then
+#      if
+#        ! certbot --email "$EMAIL" --agree-tos --rsa-key-size 4096 -w /var/www/bigbluebutton-default/assets/ \
+#        -d "$HOST" --deploy-hook "systemctl reload nginx" "${LETS_ENCRYPT_OPTIONS[@]}" certonly
+#      then
+#        systemctl restart nginx
+#        err "Let's Encrypt SSL request for $HOST did not succeed - exiting"
+#      fi
+#    else
+#      # Place your fullchain.pem and privkey.pem files in /local/certs/ and bbb-install-2.6.sh will deal with the rest.
+#      mkdir -p "/etc/letsencrypt/live/$HOST/"
+#      ln -s /local/certs/fullchain.pem "/etc/letsencrypt/live/$HOST/fullchain.pem"
+#      ln -s /local/certs/privkey.pem "/etc/letsencrypt/live/$HOST/privkey.pem"
+#    fi
+#  fi
 
   if [ -z "$COTURN" ]; then
     # No COTURN credentials provided, setup a local TURN server
@@ -1577,33 +1577,33 @@ server {
   }
 }
 
-#server {
-#  listen 443 ssl http2;
-#  listen [::]:443 ssl http2;
-#  server_name $HOST;
-#
-#    ssl_certificate /etc/letsencrypt/live/$HOST/fullchain.pem;
-#    ssl_certificate_key /etc/letsencrypt/live/$HOST/privkey.pem;
-#    ssl_session_cache shared:SSL:10m;
-#    ssl_session_timeout 10m;
-#    ssl_protocols TLSv1.2 TLSv1.3;
-#    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
-#    ssl_dhparam /etc/nginx/ssl/dhp-4096.pem;
-#
-#    # HSTS (comment out to enable)
-#    #add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-#
-#  access_log  /var/log/nginx/bigbluebutton.access.log;
-#
-#  # BigBlueButton landing page.
-#  location / {
-#    root   /var/www/bigbluebutton-default/assets;
-#    try_files \$uri @bbb-fe;
-#  }
-#
-#  # Include specific rules for record and playback
-#  include /etc/bigbluebutton/nginx/*.nginx;
-#}
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  server_name $HOST;
+
+    ssl_certificate /etc/letsencrypt/live/$HOST/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/$HOST/privkey.pem;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_dhparam /etc/nginx/ssl/dhp-4096.pem;
+
+    # HSTS (comment out to enable)
+    #add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+  access_log  /var/log/nginx/bigbluebutton.access.log;
+
+  # BigBlueButton landing page.
+  location / {
+    root   /var/www/bigbluebutton-default/assets;
+    try_files \$uri @bbb-fe;
+  }
+
+  # Include specific rules for record and playback
+  include /etc/bigbluebutton/nginx/*.nginx;
+}
 HERE
 
     if [ ! -f /etc/nginx/ssl/dhp-4096.pem ]; then
