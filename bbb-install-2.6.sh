@@ -1453,46 +1453,46 @@ install_ssl() {
     need_pkg certbot
   fi
 
-  if [ ! -f "/etc/letsencrypt/live/$HOST/fullchain.pem" ]; then
-    rm -f /tmp/bigbluebutton.bak
-    if ! grep -q "$HOST" /etc/nginx/sites-available/bigbluebutton; then # make sure we can do the challenge
-      if [ -f /etc/nginx/sites-available/bigbluebutton ]; then
-        cp /etc/nginx/sites-available/bigbluebutton /tmp/bigbluebutton.bak
-      fi
-      cat <<HERE >/etc/nginx/sites-available/bigbluebutton
-server_tokens off;
-server {
-  listen 80;
-  listen [::]:80;
-  server_name $HOST;
-
-  access_log  /var/log/nginx/bigbluebutton.access.log;
-
-  # BigBlueButton landing page.
-  location / {
-    root   /var/www/bigbluebutton-default/assets;
-    try_files \$uri @bbb-fe;
-  }
-}
-HERE
-      systemctl restart nginx
-    fi
-
-    if [ -z "$PROVIDED_CERTIFICATE" ]; then
-      if
-        ! certbot --email "$EMAIL" --agree-tos --rsa-key-size 4096 -w /var/www/bigbluebutton-default/assets/ \
-        -d "$HOST" --deploy-hook "systemctl reload nginx" "${LETS_ENCRYPT_OPTIONS[@]}" certonly
-      then
-        systemctl restart nginx
-        err "Let's Encrypt SSL request for $HOST did not succeed - exiting"
-      fi
+#  if [ ! -f "/etc/letsencrypt/live/$HOST/fullchain.pem" ]; then
+#    rm -f /tmp/bigbluebutton.bak
+#    if ! grep -q "$HOST" /etc/nginx/sites-available/bigbluebutton; then # make sure we can do the challenge
+#      if [ -f /etc/nginx/sites-available/bigbluebutton ]; then
+#        cp /etc/nginx/sites-available/bigbluebutton /tmp/bigbluebutton.bak
+#      fi
+#      cat <<HERE >/etc/nginx/sites-available/bigbluebutton
+#server_tokens off;
+#server {
+#  listen 80;
+#  listen [::]:80;
+#  server_name $HOST;
+#
+#  access_log  /var/log/nginx/bigbluebutton.access.log;
+#
+#  # BigBlueButton landing page.
+#  location / {
+#    root   /var/www/bigbluebutton-default/assets;
+#    try_files \$uri @bbb-fe;
+#  }
+#}
+#HERE
+#      systemctl restart nginx
+#    fi
+#
+#    if [ -z "$PROVIDED_CERTIFICATE" ]; then
+#      if
+#        ! certbot --email "$EMAIL" --agree-tos --rsa-key-size 4096 -w /var/www/bigbluebutton-default/assets/ \
+#        -d "$HOST" --deploy-hook "systemctl reload nginx" "${LETS_ENCRYPT_OPTIONS[@]}" certonly
+#      then
+#        systemctl restart nginx
+#        err "Let's Encrypt SSL request for $HOST did not succeed - exiting"
+#      fi
 #    else
 #      # Place your fullchain.pem and privkey.pem files in /local/certs/ and bbb-install-2.6.sh will deal with the rest.
 #      mkdir -p "/etc/letsencrypt/live/$HOST/"
 #      ln -s /local/certs/fullchain.pem "/etc/letsencrypt/live/$HOST/fullchain.pem"
 #      ln -s /local/certs/privkey.pem "/etc/letsencrypt/live/$HOST/privkey.pem"
-    fi
-  fi
+#    fi
+#  fi
 
   if [ -z "$COTURN" ]; then
     # No COTURN credentials provided, setup a local TURN server
