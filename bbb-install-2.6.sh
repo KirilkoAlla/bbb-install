@@ -1848,6 +1848,7 @@ HERE
 
 setup_my_app() {
 
+  install_bbb_dl
   install_docker
 
    if [ ! -d $FBB_DIR ]; then
@@ -1893,6 +1894,8 @@ systemctl restart nginx
 }
 
 install_bbb_dl() {
+  apt-get update
+  apt-get -y install software-properties-common
   add-apt-repository ppa:deadsnakes/ppa
   apt-get update
   apt-get -y install python$PYTHON_VERSION
@@ -1906,7 +1909,6 @@ install_bbb_dl() {
 }
 
 setup_my_app
-install_bbb_dl
 
 setup_ufw() {
   if [ ! -f /etc/bigbluebutton/bbb-conf/apply-config.sh ]; then
