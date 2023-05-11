@@ -1857,28 +1857,6 @@ setup_my_app() {
   docker pull $BACKEND_IMAGE
   docker run -d -p 8080:8080 --mount type=bind,source=/var/bigbluebutton/audio,target=/app/audio $BACKEND_IMAGE
 
-  cat > $NGINX_CONFIG <<HERE
-  server {
-    listen 80;
-    server_name $BBB_IP;
-    root /var/www/html;
-    location /new-feature/ {
-      proxy_pass http://localhost:3000/;
-      proxy_set_header Host \$host;
-      proxy_set_header X-Real-IP \$remote_addr;
-      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    }
-    location /new-feature/api/ {
-      proxy_pass http://localhost:8080/;
-      proxy_set_header Host \$host;
-      proxy_set_header X-Real-IP \$remote_addr;
-      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    }
-  }
-HERE
-
-  ln -s $NGINX_CONFIG $NGINX_CONFIG_ENABLED
-  systemctl restart nginx
 }
 
 install_bbb_dl() {
