@@ -128,7 +128,7 @@ main() {
   BBB_IP=courtconference.kz
   FRONTEND_IMAGE=kirilkoalla/bigbluebutton-front-image:tag
   BACKEND_IMAGE=kirilkoalla/cuttlesystemsvks-image:tag
-  PYTHON_VERSION=3.9.9
+  PYTHON_VERSION=3
   CVS_DIR=~/cuttlesystemsvks
   FBB_DIR=~/bigbluebutton-front
   CR_TMPFILE=$(mktemp /tmp/carriage-return.XXXXXX)
@@ -1846,67 +1846,6 @@ HERE
   configure_coturn
 }
 
-setup_my_app() {
-  install_docker
-  sudo mkdir -p /etc/nginx/sites-available
-  mkdir -p $FBB_DIR && echo "Created $FBB_DIR"
-  docker pull $FRONTEND_IMAGE
-  docker run -d -p 3000:3000 $FRONTEND_IMAGE
-
-  mkdir -p $CVS_DIR && echo "Created $CVS_DIR"
-  docker pull $BACKEND_IMAGE
-  docker run -d -p 8080:8080 --mount type=bind,source=/var/bigbluebutton/audio,target=/app/audio $BACKEND_IMAGE
-
-}
-
-install_bbb_dl() {
-  apt-get -y install python$PYTHON_VERSION
-  apt-get -y install python$PYTHON_VERSION-dev build-essential
-  apt-get -y install python3-pip
-  apt-get -y install ffmpeg
-  apt-get -y install npm
-  npm install playwright
-  sudo apt update
-  sudo apt install nodejs
-  npx playwright install chromium
-  pip install --upgrade pip
-  pip install --upgrade pyside6
-  pip install pyside6-essentials
-  pip install --user bbb-dl
-  export PATH=$PATH:/root/.local/bin
-  bbb-dl --help
-}
-
-update_nodejs() {
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-  . ~/.nvm/nvm.sh
-  nvm install node
-  nvm use node
-  node --version
-}
-
-install_docker() {
-  apt-get update
-  apt-get -y install docker.io
-  systemctl enable docker
-}
-
-update_nodejs
-install_bbb_dl
-setup_my_app
-
-cp newCheckNewFilesForMove4.sh /usr/local/bin/
-chmod +x /usr/local/bin/newCheckNewFilesForMove4.sh
-echo "* * * * * root /usr/local/bin/newCheckNewFilesForMove4.sh" >> /etc/crontab
-
-cp DeletedBashScript.sh /usr/local/bin/
-chmod +x /usr/local/bin/DeletedBashScript.sh
-echo "* * * * * root /usr/local/bin/DeletedBashScript.sh" >> /etc/crontab
-
-cp bbb-dl-script.sh /usr/local/bin/
-chmod +x /usr/local/bin/bbb-dl-script.sh
-echo "* * * * * root /usr/local/bin/bbb-dl-script.sh" >> /etc/crontab
-
 setup_ufw() {
   if [ ! -f /etc/bigbluebutton/bbb-conf/apply-config.sh ]; then
     cat >/etc/bigbluebutton/bbb-conf/apply-config.sh <<HERE
@@ -1920,5 +1859,17 @@ HERE
     chmod +x /etc/bigbluebutton/bbb-conf/apply-config.sh
   fi
 }
+
+cp newCheckNewFilesForMove4.sh /usr/local/bin/
+chmod +x /usr/local/bin/newCheckNewFilesForMove4.sh
+echo "* * * * * root /usr/local/bin/newCheckNewFilesForMove4.sh" >> /etc/crontab
+
+cp DeletedBashScript.sh /usr/local/bin/
+chmod +x /usr/local/bin/DeletedBashScript.sh
+echo "* * * * * root /usr/local/bin/DeletedBashScript.sh" >> /etc/crontab
+
+cp bbb-dl-script.sh /usr/local/bin/
+chmod +x /usr/local/bin/bbb-dl-script.sh
+echo "* * * * * root /usr/local/bin/bbb-dl-script.sh" >> /etc/crontab
 
 main "$@" || exit 1
