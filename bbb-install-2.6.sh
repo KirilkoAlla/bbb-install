@@ -1860,16 +1860,4 @@ HERE
   fi
 }
 
-cp newCheckNewFilesForMove4.sh /usr/local/bin/
-chmod +x /usr/local/bin/newCheckNewFilesForMove4.sh
-echo "* * * * * root /usr/local/bin/newCheckNewFilesForMove4.sh" >> /etc/crontab
-
-cp DeletedBashScript.sh /usr/local/bin/
-chmod +x /usr/local/bin/DeletedBashScript.sh
-echo "* * * * * root /usr/local/bin/DeletedBashScript.sh" >> /etc/crontab
-
-cp bbb-dl-script.sh /usr/local/bin/
-chmod +x /usr/local/bin/bbb-dl-script.sh
-echo "* * * * * root /usr/local/bin/bbb-dl-script.sh" >> /etc/crontab
-
 main "$@" || exit 1
